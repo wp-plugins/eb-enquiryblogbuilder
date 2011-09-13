@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Enquiry Blogger Information</title>
+<body>
+
+<h1>Enquiry Blog Builder</h1>
+<ul>
+<li>Contributors: EnquiryBlogger</li>
+<li>Tags: education, school, open university, widget, plugin, wpmu, elli, enquiryblogger</li>
+<li>Requires at least: 3.0.0</li>
+<li>Tested up to: 3.2.1</li>
+<li>Stable tag: trunk</li>
+</ul>
+
+A suit of plugins to help students enquire into a subject and teachers to manage their progress. Intended for use with multi-site setups.
+
+<h2>Description</h2>
+<p>
+There are several plugins as part of this suite, they can be used independently, but are intended to work together. More details of the EnquiryBlogger project can be found on the <a href="http://learningemergence.net/tools/enquiryblogger" title="Learning Emergence">Learning Emergence site</a>.
+</p>
+
+<h2>Source code</h2>
+<p>
+The source code is held on the WordPress.org site using subversion (SVN). It is stored at the address <a href="http://plugins.svn.wordpress.org/eb-enquiryblogbuilder/">http://plugins.svn.wordpress.org/eb-enquiryblogbuilder/</a>
+Use SVN (or a client such as TortoiseSVN or Eclipse) to get the latest files. In order to add updates, you will need to commit the changes to the repositary using the WordPress.org username and password. See the EnquiryBlogger manager for those details.
+</p>
+
+<h3>MoodView</h3>
+<p>
+This displays a line graph plotting the mood of the student as their enquiry progresses. The widget displays the past few moods and allows a new one to be selected at any time. Changing moods (a hard coded drop-down list from 'going great' to 'it's a disaster') creates a new blog entry with an optional reason for the mood change.
+</p>
+
+<p>
+The graph is created using the included <a href="http://code.google.com/p/flot/" title="Flot - Attractive Javascript plotting for jQuery">Flot</a> JavaScript library. This means that the widget will work on more devices than if it had used Flash to display the graph as an earlier version did.
+</p>
+
+<p>
+Each new point on the graph is stored in a central table along with a timestamp. It also creates a new post with optional content. Clicking on a point on the graph will list all posts from that time and earlier.
+</p>
+
+
+<h3>EnquirySpiral</h3>
+<p>
+This widget provides a graphical display of the number of posts made in the first nine categories. A spiral of blobs appears over an image with each blob representing a category. The blobs are small and red when no posts have been made. They change to yellow for one or two posts, and green for three or more. In this way it is easy for the student to see how they are progressing, assuming the nine categories are well chosen.
+</p>
+
+<p>
+Clicking on any of the blobs will go to a category view of the blog listing posts in the selected category. The category name appears on rollover of the blob too.
+</p>
+
+<p>
+The blobs are created using PHP, so some problems may occur (no blobs) if Apatche modules are missing. Not having any categories will also result in blobs missing.
+</p>
+
+<p>
+The colour of the blobs and the steps at which they change is hard coded into the plugin. As the dashboard version also included this information, both would have to be changed for them to remain in step.
+</p>
+
+<h3>EnquirySpider</h3>
+
+<p>
+This widget works in the same way as the EnquirySpiral, except that the blobs are arranged in a star shape. They are associated with seven categories. (from nine to sixteen so they don't conflict with the EnquirySpiral). The categories are intended to match with the <a href="http://www.ellionline.co.uk/" title="ELLI">Effective Lifelong Learning Inventory diagram</a>.
+</p>
+
+<p>
+The code for this plugin is essentially the same as the previous one. All that has changed is the layout of the blobs and the choice of categories of interest. It is possible that a single plugin could replace both, perhaps with a number of ways of presenting the data - spiral, circle, chart, list etc. Not having the categories hardwired would also be a good improvement.
+</p>
+
+<h3>Dashboard Widgets</h3>
+<p>
+Along with the three plugins above, there are corresponding ones that provide widgets on the dashboard for the teacher. These widgets will show the widgets for all of their students.
+</p>
+<p>
+The code for the dashboard widgets are almost the same as their single counterparts. It's just that a call is made to get all members of the current group and display the widget for each blog found. For the Spiral and Spider widgets, a bar graph is also created showing for each blog the number of posts made in each category.
+</p>
+
+<p>
+Currently the dashboard and single user widgets do not share any code, so changes made in one will probably have to be made in the other. This could be changed in future.
+</p>
+
+<h3>BlogBuilder</h3>
+
+<p>
+This plugin allows batch creation of blogs. Teacher names and student names are provided and all the blogs are built in one go. The teacher-student relationship is stored in a table in the database. Teachers who login will then see the dashboard showing the progress of the students assigned to them.
+</p>
+
+<p>
+Because only names are given to build the blogs, dummy email addresses (name@example.com) are used and all passwords are set to "teacher" for the teacher blogs and "student" for the students. These should obviously be changed when the blog is first used. A future update could create randomly generated passwords and require real emails instead.
+</p>
+
+<p>
+In order to make the blog builder more effective, we recommend <a href="http://wordpress.org/extend/plugins/wpmu-new-blog-defaults/" title="New Blog Defaults plugin">New Blog Defaults</a> plugin which allows each new blog to inherit the same set of defaults. In particular, setting the categories for the Spiral and the Spider widgets and choosing the blog theme.
+</p>
+
+<p>
+New blogs have only one category "unassigned" and new categories are not shared between blogs, so the same set must be created for every new blog. This is something the New Blog Defaults plugin can do, as well as selecting the theme.
+</p>
+
+<p>
+We wanted the blog builder to create all blogs and not require any layout changes or widget fiddling for individual blogs afterwards. To acheive this, we picked a theme to use and some code in the eb-blogbuilder.php was hard coded to this theme. We used the <a href="http://wordpress.org/extend/themes/suffusion">Suffusion</a> theme to place the widgets and also applied a number of <a href="http://wordpress.org/extend/themes/suffusion">Suffusion</a> presets to every blog so they would be laid out as we required. We also created a child-theme of <a href="http://wordpress.org/extend/themes/suffusion">Suffusion</a> which adds an extra page that will dynamically display links to the other students in a group that the blog belongs to. As this is all dependent on the Suffusion theme, we have commented that code out, but it can easily be re-added.
+</p>
+
+<p>
+The blog builder page can be found by going to the username drop-down on the right-hand side and select <em>Site Admin</em>. Click on <em>Settings</em> and then <em>Enquiry Blog Builder</em>. On earlier versions of WordPress, look under <em>Tools</em> instead of <em>Settings</em>.
+</p>
+
+<p>
+Each set of blogs is associated with a school (6 letter code) and a group (6 letter code) within the school. A blog is made by concatenating the school, group and student name.
+The username is made from the school and student name. If the same student (or teacher) appears in several groups, they will have multiple blogs (each with a different group name) but only a single username to manage them.
+</p>
+
+<p>
+There is a section on the blog builder to add new teachers or students to a group. The only way to remove someone from a group is to recreate the group with the name missing.
+</p>
+
+
+<h2>Installation</h2>
+
+<ol>
+<li>Upload the 'eb-enquiryblogbuilder' folder to the `/wp-content/plugins/` directory</li>
+<li>Activate the plugins through the 'Plugins' menu in WordPress</li>
+<li>If you intend to use the <a href="http://wordpress.org/extend/themes/suffusion">Suffusion</a> theme, install it and uncomment the code in eb-blogbuilder and add the suffusion-child folder into /wp-content/themes</li>
+<li>Install the <a href="http://wordpress.org/extend/plugins/wpmu-new-blog-defaults/" title="New Blog Defaults plugin">New Blog Defaults</a> plugin to set the default theme and categories for every new blog.</li>
+</ol>
+
+</body>
+</html>
