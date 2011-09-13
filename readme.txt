@@ -25,7 +25,7 @@ In order to make the blog builder more effective, we recommend [New Blog Default
 
 We wanted the blog builder to create all blogs and not require any layout changes or widget fiddling for individual blogs afterwards. To acheive this, we picked a theme to use and some code in the eb-blogbuilder.php is hard coded to this theme,
 
-We used the *Suffusion* theme to place the widgets and also applied a number of *Suffusion* presets to every blog so they would be laid out as we required. We also created a child-theme of *Suffusion* which adds an extra page that will dynamically display links to the other students in a group that the blog belongs to. As this is all dependent on the Suffusion theme, we have commented that code out, but it can easily be re-added. 
+We used the [Suffusion](http://wordpress.org/extend/themes/suffusion) theme to place the widgets and also applied a number of [Suffusion](http://wordpress.org/extend/themes/suffusion) presets to every blog so they would be laid out as we required. We also created a child-theme of [Suffusion](http://wordpress.org/extend/themes/suffusion) which adds an extra page that will dynamically display links to the other students in a group that the blog belongs to. As this is all dependent on the Suffusion theme, we have commented that code out, but it can easily be re-added. 
 
 
 Part of the Open University EnquiryBlogger suite.
@@ -34,10 +34,14 @@ Part of the Open University EnquiryBlogger suite.
 
 1. Upload the 'eb-enquiryblogbuilder' folder to the `/wp-content/plugins/` directory
 1. Activate the plugins through the 'Plugins' menu in WordPress
-1. If you intend to use the Suffusion theme, install it and uncomment the code in eb-blogbuilder and add the suffusion-child folder into /wp-content/themes
+1. If you intend to use the [Suffusion](http://wordpress.org/extend/themes/suffusion) theme, install it and uncomment the code in eb-blogbuilder and add the suffusion-child folder into /wp-content/themes
 1. Install the [New Blog Defaults](http://wordpress.org/extend/plugins/wpmu-new-blog-defaults/ "New Blog Defaults plugin") plugin to set the default theme and categories for every new blog.
 
 == Frequently Asked Questions ==
+
+= Where do I find the blog builder page? =
+
+Go to the username drop-down on the right-hand side and select *Site Admin*. Click on *Settings* and then *Enquiry Blog Builder*.
 
 = What if I want several groups? = 
 
@@ -50,6 +54,9 @@ The username is made from the school and student name. If the same student (or t
 There is a section on the blog builder to add new teachers or students to a group.
 
 == Screenshots ==
+
+1. The three widgets on a student's blog.
+1. A view on the dashboard for a teacher of two students.
 
 == Changelog ==
 
