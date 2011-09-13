@@ -9,7 +9,7 @@ A suit of plugins to help students enquire into a subject and teachers to manage
 
 == Description ==
 
-There are several plugins as part of this suite, they can be used independently, but are intended to work together.
+There are several plugins as part of this suite, they can be used independently, but are intended to work together. More details of the EnquiryBlogger project can be found on the [Learning Emergence](http://learningemergence.net/tools/enquiryblogger "Learning Emergence") site.
 
 **MoodView** - This displays a line graph plotting the mood of the student as their enquiry progresses. The widget displays the past few moods and allows a new one to be selected at any time. Changing moods (a hard coded drop-down list from 'going great' to 'it's a disaster') creates a new blog entry with an optional reason for the mood change. The graph is created using the included [Flot](http://code.google.com/p/flot/ "Flot - Attractive Javascript plotting for jQuery") JavaScript library.
 
