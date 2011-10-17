@@ -11,6 +11,8 @@ A suit of plugins to help students enquire into a subject and teachers to manage
 
 There are several plugins as part of this suite, they can be used independently, but are intended to work together. More details of the EnquiryBlogger project can be found on the [Learning Emergence](http://learningemergence.net/tools/enquiryblogger "Learning Emergence") site.
 
+The development of EnquiryBlogger was funded as part of [Learning Futures](http://www.learningfutures.org/ "Learning Futures"), a project launched in 2008 by the Paul Hamlyn Foundation (a charity) and the Innovation Unit (a social enterprise) in order to find ways to improve educational outcomes in secondary school by increasing young peoples' engagement in learning.
+
 **MoodView** - This displays a line graph plotting the mood of the student as their enquiry progresses. The widget displays the past few moods and allows a new one to be selected at any time. Changing moods (a hard coded drop-down list from 'going great' to 'it's a disaster') creates a new blog entry with an optional reason for the mood change. The graph is created using the included [Flot](http://code.google.com/p/flot/ "Flot - Attractive Javascript plotting for jQuery") JavaScript library.
 
 **EnquirySpiral** - This widget provides a graphical display of the number of posts made in the first nine categories. A spiral of blobs appears over an image with each blob representing a category. The blobs are small and red when no posts have been made. They change to yellow for one or two posts, and green for three or more. In this way it is easy for the student to see how they are progressing, assuming the nine categories are well chosen.
