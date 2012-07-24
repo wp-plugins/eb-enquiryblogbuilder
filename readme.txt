@@ -3,7 +3,7 @@ Contributors: EnquiryBlogger
 Tags: education, school, open university, widget, plugin, wpmu, elli, enquiryblogger
 Requires at least: 3.0.0
 Tested up to: 3.2.1
-Stable tag: trunk
+Stable tag: 1.1
 
 A suit of plugins to help students enquire into a subject and teachers to manage their progress. Intended for use with multi-site setups.
 
