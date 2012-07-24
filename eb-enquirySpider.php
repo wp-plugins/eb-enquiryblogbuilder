@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: ELLI Spider
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays how many posts in each category have been posted
-		Version: 1.0
+		Version: 1.1
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -25,12 +25,60 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+include_once("eb-functions.php");
+
+include_once("eb-spiderSetup.php");
+
+// Return the details of the requested group, if it exists
+function getGroupFromBlog($blog_id) {
+	global $wpdb;
+
+	switch_to_blog(1);
+	$table_name = $wpdb->prefix."group_members";
+	$group_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $table_name WHERE blog_id = %d", $blog_id));
+	restore_current_blog();
+	
+	return ($group_id);
+}
+
+// Return true if any of the images for the group are non-null
+function groupHasImages($group_id) {
+	global $wpdb;
+
+	switch_to_blog(1);
+	$table_name = $wpdb->prefix."group_spider";
+	$spider_info = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE group_id = %s", $group_id));
+	restore_current_blog();
+	
+	for ($i = 0; $i < 7; $i++) {
+		$imageName = 'image_'.$i;
+		if ($spider_info->$imageName != NULL) return true;
+	}
+	
+	return ($false);
+}
+
+
 function display_spider($categories, $prefix) {
-	global $blog_id;
-
+	global $blog_id;	
+	
 	$path = '/wp-content/plugins/eb-enquiryblogbuilder/';
-	$filename = getcwd().$path.'spiderBackground.jpg';
+	$filename = getcwd().$path.'spiderBackground';
 
+
+	// If the blog is in a group, and the group has images assigned, then use it
+	$group_id = getGroupFromBlog($blog_id);
+	$has_images = groupHasImages($group_id);
+	if ($group_id && $has_images) {		
+		$filename = $filename.'_'.$group_id.'.jpg';
+		rebuildSpider($group_id);
+		$pointDistance = 60;
+	} else {
+		$filename = $filename.'.jpg';
+		$pointDistance = 120;
+	}
+	
+	
 	$work_img = imagecreatefromjpeg( $filename );
 	if (!$work_img) return;
 
@@ -43,20 +91,12 @@ function display_spider($categories, $prefix) {
 	$minSize = 20;
 	$maxSize = 50;
 	$thickness = 3;
-	$spiderImageWidth = 150;
+	$spiderImageWidth = 280; // 150; // larger image for double width image
 
 	list( $width, $height ) = getimagesize( $filename );
 	$scale = $spiderImageWidth / $width;
 
-	$points = array(
-							array(175,55),
-							array(268,103),
-							array(289,201),
-							array(227,280),
-							array(124,278),
-							array(62,200),
-							array(85,101)
-						);
+	$points = getPoints($pointDistance, $width);
 
 	echo '<map name="spider_'.$blog_id.'">';
 
@@ -66,7 +106,7 @@ function display_spider($categories, $prefix) {
 		$post = min($postLimit, $category->count);
 
 		$radius = $minSize + ($post / $postLimit) * ($maxSize - $minSize);
-		$colour = ($post <= 0) ? $nopost_colour : (($post <= 2) ? $somepost_colour : $manypost_colour);
+		$colour = ($post <= 0) ? $nopost_colour : (($post <= 1) ? $somepost_colour : $manypost_colour);
 		list($x_pos, $y_pos) = $points[$i];
 		if ($x_pos == null) break;
 
@@ -95,8 +135,10 @@ function display_spider($categories, $prefix) {
 
 	?>
 
-	<img src="<?php echo $prefix.$path.'spider_'.$blog_id.'.png';?>" style="border:0" title="Enquiry spider" alt="Enquiry spider" usemap="#spider_<?php echo $blog_id; ?>" />
-
+	<div style="text-align:center">
+	<img src="<?php echo $prefix.$path.'spider_'.$blog_id.'.png';?>" style="border:0" title="ELLI spider" alt="ELLI spider" usemap="#spider_<?php echo $blog_id; ?>" />
+	</div>
+	
 	<?php
 }
 

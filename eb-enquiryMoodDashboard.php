@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Mood View Dashboard
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays the mood of all other blogs
-		Version: 1.0
+		Version: 1.1
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -66,7 +66,7 @@ function get_moods_dashboard_history($blog_id) {
 function display_moods_dashboard_graph($blognames, $values) {
 	?>
 
-<!--[if IE]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/eb-enquiryblogbuilder/flot/excanvas.min.js"></script><![endif]-->
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/eb-enquiryblogbuilder/flot/excanvas.min.js"></script><![endif]-->
 
 <div id="moods_placeholder" style="width:100%; height:250px;"></div>
 
@@ -108,13 +108,13 @@ jQuery(function moods() {
 
 		// Attach a click function to links with the metabox-group class to redraw the graph
 		// otherwise it doesn't get redrawn if the box starts closed.
-		jQuery('#mood_view_dashboard').click(function(){
-			plotGraphMoods();
-		});
+		//jQuery('#mood_view_dashboard').click(function(){
+		//	plotGraphMoods();
+		//});
 
-		jQuery(window).resize(function () {
-			plotGraphMoods();
-		});
+		//jQuery(window).resize(function () {
+		//	plotGraphMoods();
+		//});
 
     function plotGraphMoods() {
 			jQuery.plot(jQuery("#moods_placeholder"), [ <?php echo $data; ?> ], {
@@ -132,6 +132,7 @@ jQuery(function moods() {
 					ticks: [[0, ":-("], [1,":-/"], [2,":-|"], [3,":-)"], [4,":-D"]]
 				},
 				xaxis: {
+					rotateTicks: 90,
 					mode: "time" }
 			});
     }
@@ -221,14 +222,15 @@ function mood_view_dashboard() {
 function mood_view_dashboard_init() {
 	wp_add_dashboard_widget('mood_view_dashboard', 'Mood View Dashboard', 'mood_view_dashboard');
 }
-
+add_action('wp_dashboard_setup', 'mood_view_dashboard_init' );
 
 function mood_dashboard_scripts() {
-    wp_enqueue_script( 'flot', plugins_url().'/eb-enquiryblogbuilder/flot/jquery.flot.js', array('jquery'));
-    wp_enqueue_script( 'flot-stack', plugins_url().'/eb-enquiryblogbuilder/flot/jquery.flot.stack.js', array('jquery', 'flot'));
+		$path = plugin_dir_url(__FILE__);
+    wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
+    wp_enqueue_script( 'flot-tickrotor', $path.'flot/jquery.flot.tickrotor.js', array('jquery', 'flot') );
+    wp_enqueue_script( 'flot-resize', $path.'flot/jquery.flot.resize.min.js', array('jquery', 'flot', 'flot-tickrotor') );
+    wp_enqueue_style( 'dashboard', $path.'dashboard.css' );
 }
-
-add_action('init', 'mood_dashboard_scripts');
-add_action('wp_dashboard_setup', 'mood_view_dashboard_init' );
+add_action('admin_menu', 'mood_dashboard_scripts');
 
 ?>

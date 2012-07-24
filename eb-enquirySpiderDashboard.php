@@ -1,9 +1,9 @@
 <?php
 /*
-		Plugin Name: EnquiryBlogger: Enquiry Spider Dashboard
+		Plugin Name: EnquiryBlogger: ELLI Spider Dashboard
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays category details of all other blogs
-		Version: 1.0
+		Version: 1.1
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -25,14 +25,18 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+include_once("eb-functions.php");
+
+include_once("eb-spiderSetup.php");
 
 // Output a single imagemap for a particular blog
 function display_spider_dashboard($categories, $prefix, $id) {
 
-	$path = '../wp-content/plugins/eb-enquiryBlogBuilder/';
-	$filename = getcwd().'/'.$path.'spiderBackground.jpg';
-
+	$path = dirname(__FILE__);	
+	$filename = $path.'/spiderBackground.jpg';
+	
 	$work_img = imagecreatefromjpeg( $filename );
+
 	if (!$work_img) return;
 	
 	$edge_colour = 0x00000000;
@@ -49,15 +53,7 @@ function display_spider_dashboard($categories, $prefix, $id) {
 	list( $width, $height ) = getimagesize( $filename );
 	$scale = $spiderImageWidth / $width;
 	
-	$points = array(
-							array(175,55), 
-							array(268,103), 
-							array(289,201), 
-							array(227,280), 							
-							array(124,278), 
-							array(62,200),							
-							array(85,101)
-						);
+	$points = getPoints(120, $width);
 
 	echo '<map name="spider_'.$id.'">';
 
@@ -67,7 +63,7 @@ function display_spider_dashboard($categories, $prefix, $id) {
 		$post = min($postLimit, $category->count);
 		
 		$radius = $minSize + ($post / $postLimit) * ($maxSize - $minSize);
-		$colour = ($post <= 0) ? $nopost_colour : (($post <= 2) ? $somepost_colour : $manypost_colour);
+		$colour = ($post <= 0) ? $nopost_colour : (($post <= 1) ? $somepost_colour : $manypost_colour);
 		list($x_pos, $y_pos) = $points[$i];
 		if ($x_pos == null) break;
 		
@@ -89,14 +85,14 @@ function display_spider_dashboard($categories, $prefix, $id) {
 	
 	imagecopyresampled($final_img, $work_img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 	
-	if (!imagepng( $final_img, $path.'spider_'.$id.'.png' )) return;
+	if (!imagepng( $final_img, $path.'/spider_'.$id.'.png' )) return;
 
 	imagedestroy( $work_img );
 	imagedestroy( $final_img );
 	
 	?>
-
-	<img src="<?php echo $path.'spider_'.$id.'.png';?>" style="border:0" title="Enquiry Spider" alt="Enquiry Spider" usemap="#spider_<?php echo $id ?>" />
+	
+	<img src="<?php echo plugins_url().'/eb-enquiryblogbuilder/spider_'.$id.'.png';?>" style="border:0" title="ELLI Spider" alt="ELLI Spider" usemap="#spider_<?php echo $id ?>" />
 	
 	<?php	
 }
@@ -106,7 +102,7 @@ function display_spider_dashboard($categories, $prefix, $id) {
 function display_spider_graph($blognames, $values, $categories) {
 	?>
 
-<!--[if IE]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/flot/excanvas.min.js"></script><![endif]-->
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/flot/excanvas.min.js"></script><![endif]-->
 
 <div id="spider_placeholder" style="width:100%; height:250px;"></div>
 
@@ -145,14 +141,14 @@ jQuery(function spider() {
 		?>
 
 		// Attach a click function to links with the metabox-group class to redraw the graph
-		// otherwise it doesn't get redrawn if the box starts closed.
-		jQuery('#enquiry_spider_dashboard').click(function(){
-			plotGraphSpider();
-		});
+		// otherwise it doesn't get redrawn if the box starts closed. Removed thanks to jquery.flot.resize.js
+		//jQuery('#enquiry_spider_dashboard').click(function(){
+		//	plotGraphSpider();
+		//});
 
-		jQuery(window).resize(function () {
-			plotGraphSpider();
-		});
+		//jQuery(window).resize(function () {
+		//	plotGraphSpider();
+		//});
 
     function plotGraphSpider() {
         jQuery.plot(jQuery("#spider_placeholder"), [ <?php echo $data; ?> ], {
@@ -162,7 +158,8 @@ jQuery(function spider() {
             },
 						grid: {clickable: true, hoverable: true},
 						xaxis: {
-								ticks: [<?php $i = 0; foreach ($blognames as $name) { echo '['.$i.',"'.$name[0].'"]';$i++; if ($i < count($blognames)) echo ', '; }?>]
+								rotateTicks: 90,
+								ticks: [<?php $i = 0; foreach ($blognames as $name) { echo '['.$i.',"'.html_entity_decode($name[0], ENT_QUOTES | ENT_HTML401).'"]';$i++; if ($i < count($blognames)) echo ', '; }?>]
 						}
         });
     }
@@ -250,7 +247,7 @@ function display_enquiry_spider_dashboard() {
 		$categories = get_categories( $args );
 		restore_current_blog();
 
-		echo '<div style="float:left; width:120px; padding-right:10px; padding-left:10px; overflow: hidden; text-overflow: ellipsis; white-space:nowrap;">';
+		echo '<div class="enquiryblogger-dashboard enquiryblogger-dashboard-spider">';
 		echo '<p><strong>'.$blog->blogname."</strong></p>";
 
 		//display_spider_dashboard( $categories, $prefix, $blog->userblog_id );
@@ -287,17 +284,20 @@ function display_enquiry_spider_dashboard() {
 } 
 
 
-// Create the function use in the action hook
+// Create the function to use in the action hook
 function enquiry_spider_dashboard_init() {
-	wp_add_dashboard_widget('enquiry_spider_dashboard', 'Enquiry Spider Dashboard', 'display_enquiry_spider_dashboard');	
+	wp_add_dashboard_widget('enquiry_spider_dashboard', 'ELLI Spider Dashboard', 'display_enquiry_spider_dashboard');	
 } 
-
-//function spider_dashboard_scripts() {	
-//    wp_enqueue_script( 'flot', plugins_url().'/flot/jquery.flot.js', array('jquery'));
-//    wp_enqueue_script( 'flot-stack', plugins_url().'/flot/jquery.flot.stack.js', array('jquery', 'flot'));
-//}
-
-//add_action('init', 'spider_dashboard_scripts');
 add_action('wp_dashboard_setup', 'enquiry_spider_dashboard_init' );
+
+function spider_dashboard_scripts() {	
+		$path = plugin_dir_url(__FILE__);
+    wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
+    wp_enqueue_script( 'flot-stack', $path.'flot/jquery.flot.stack.min.js', array('jquery', 'flot') );
+    wp_enqueue_script( 'flot-tickrotor', $path.'flot/jquery.flot.tickrotor.js', array('jquery', 'flot') );
+    wp_enqueue_script( 'flot-resize', $path.'flot/jquery.flot.resize.min.js', array('jquery', 'flot', 'flot-tickrotor') );
+    wp_enqueue_style( 'dashboard', $path.'dashboard.css' );
+}
+add_action('init', 'spider_dashboard_scripts');
 
 ?>

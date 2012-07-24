@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Enquiry Spiral Dashboard
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays category details of all other blogs
-		Version: 1.0
+		Version: 1.1
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -25,12 +25,13 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+include_once("eb-functions.php");
 
 // Output a single imagemap for a particular blog
 function display_spiral_dashboard($categories, $prefix, $id) {
 
-	$path = '../wp-content/plugins/eb-enquiryBlogBuilder/';
-	$filename = getcwd().'/'.$path.'spiralBackground.jpg';
+	$path = dirname(__FILE__);	
+	$filename = $path.'/spiralBackground.jpg';
 
 	$work_img = imagecreatefromjpeg( $filename );
 	if (!$work_img) return;
@@ -69,7 +70,7 @@ function display_spiral_dashboard($categories, $prefix, $id) {
 		$post = min($postLimit, $category->count);
 
 		$radius = $minSize + ($post / $postLimit) * ($maxSize - $minSize);
-		$colour = ($post <= 0) ? $nopost_colour : (($post <= 2) ? $somepost_colour : $manypost_colour);
+		$colour = ($post <= 0) ? $nopost_colour : (($post <= 1) ? $somepost_colour : $manypost_colour);
 		list($x_pos, $y_pos) = $points[$i];
 		if ($x_pos == null) break;
 
@@ -91,14 +92,14 @@ function display_spiral_dashboard($categories, $prefix, $id) {
 
 	imagecopyresampled($final_img, $work_img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 
-	if (!imagepng( $final_img, $path.'spiral_'.$id.'.png' )) return;
+	if (!imagepng( $final_img, $path.'/spiral_'.$id.'.png' )) return;
 
 	imagedestroy( $work_img );
 	imagedestroy( $final_img );
 
 	?>
 
-	<img src="<?php echo $path.'spiral_'.$id.'.png';?>" style="border:0" title="Enquiry Spiral" alt="Enquiry Spiral" usemap="#spiral_<?php echo $id ?>" />
+	<img src="<?php echo plugins_url().'/eb-enquiryblogbuilder/spiral_'.$id.'.png';?>" style="border:0" title="Enquiry Spiral" alt="Enquiry Spiral" usemap="#spiral_<?php echo $id ?>" />
 
 	<?php
 }
@@ -108,7 +109,7 @@ function display_spiral_dashboard($categories, $prefix, $id) {
 function display_spiral_graph($blognames, $values, $categories) {
 	?>
 
-<!--[if IE]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/flot/excanvas.min.js"></script><![endif]-->
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/flot/excanvas.min.js"></script><![endif]-->
 
 <div id="spiral_placeholder" style="width:100%; height:250px;"></div>
 
@@ -147,14 +148,14 @@ jQuery(function spiral() {
 		?>
 
 		// Attach a click function to links with the metabox-group class to redraw the graph
-		// otherwise it doesn't get redrawn if the box starts closed.
-		jQuery('#enquiry_spiral_dashboard').click(function(){
-			plotGraphSpiral();
-		});
+		// otherwise it doesn't get redrawn if the box starts closed. Removed thanks to jquery.flot.resize.js
+		//jQuery('#enquiry_spiral_dashboard').click(function(){
+		//	plotGraphSpiral();
+		//});
 
-		jQuery(window).resize(function () {
-			plotGraphSpiral();
-		});
+		//jQuery(window).resize(function () {
+		//	plotGraphSpiral();
+		//});
 
     function plotGraphSpiral() {
         jQuery.plot(jQuery("#spiral_placeholder"), [ <?php echo $data; ?> ], {
@@ -164,8 +165,10 @@ jQuery(function spiral() {
             },
 						grid: {clickable: true, hoverable: true},
 						xaxis: {
-								ticks: [<?php $i = 0; foreach ($blognames as $name) { echo '['.$i.',"'.$name[0].'"]';$i++; if ($i < count($blognames)) echo ', '; }?>]
+								rotateTicks: 90,
+								ticks: [<?php $i = 0; foreach ($blognames as $name) { echo '['.$i.',"'.html_entity_decode($name[0], ENT_QUOTES | ENT_HTML401).'"]';$i++; if ($i < count($blognames)) echo ', '; }?>]
 						}
+						
         });
     }
 	
@@ -251,7 +254,7 @@ function display_enquiry_spiral_dashboard() {
 		$categories = get_categories( $args );
 		restore_current_blog();
 
-		echo '<div style="float:left; width:120px; padding-right:10px; padding-left:10px; overflow: hidden; text-overflow: ellipsis; white-space:nowrap;">';
+		echo '<div class="enquiryblogger-dashboard enquiryblogger-dashboard-spiral">';
 		echo '<p><strong>'.$blog->blogname.'</strong></p>';
 
 		display_spiral_dashboard( $categories, $prefix, $blog->blog_id );
@@ -291,13 +294,16 @@ function display_enquiry_spiral_dashboard() {
 function enquiry_spiral_dashboard_init() {
 	wp_add_dashboard_widget('enquiry_spiral_dashboard', 'Enquiry Spiral Dashboard', 'display_enquiry_spiral_dashboard');
 }
-
-//function spiral_dashboard_scripts() {	
-//    wp_enqueue_script( 'flot', plugins_url().'/eb-enquiryBlogBuilder/flot/jquery.flot.js', array('jquery'));
-//    wp_enqueue_script( 'flot-stack', plugins_url().'/eb-enquiryBlogBuilder/flot/jquery.flot.stack.js', array('jquery', 'flot'));
-//}
-
-//add_action('init', 'spiral_dashboard_scripts');
 add_action('wp_dashboard_setup', 'enquiry_spiral_dashboard_init' );
+
+function spiral_dashboard_scripts() {	
+		$path = plugin_dir_url(__FILE__);
+    wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
+    wp_enqueue_script( 'flot-stack', $path.'flot/jquery.flot.stack.min.js', array('jquery', 'flot') );
+    wp_enqueue_script( 'flot-tickrotor', $path.'flot/jquery.flot.tickrotor.js', array('jquery', 'flot') );
+    wp_enqueue_script( 'flot-resize', $path.'flot/jquery.flot.resize.min.js', array('jquery', 'flot', 'flot-tickrotor') );
+    wp_enqueue_style( 'dashboard', $path.'dashboard.css' );
+}
+add_action('admin_menu', 'spiral_dashboard_scripts');
 
 ?>

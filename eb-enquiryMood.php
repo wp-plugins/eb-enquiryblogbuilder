@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Mood View
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Allows student to set their current mood
-		Version: 1.0
+		Version: 1.1
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -77,7 +77,7 @@ function get_mood_history($blog_id) {
 function display_moods_graph($blognames, $values) {
 	?>
 
-<!--[if IE]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/eb-enquiryblogbuilder/flot/excanvas.min.js"></script><![endif]-->
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="<?php echo plugins_url(); ?>/eb-enquiryblogbuilder/flot/excanvas.min.js"></script><![endif]-->
 
 <div id="moods_placeholder" style="width:100%; height:200px; border:none;"></div>
 
@@ -205,37 +205,36 @@ function display_mood_view($args) {
 		
 		<script language="javascript" type="text/javascript">
 		
-			// Set a div block to be on or off
-			function setLayerVisible(whichLayer, visible) {
-				if (document.getElementById && document.getElementById(whichLayer)) {
-						var style2 = document.getElementById(whichLayer).style;
-						if (style2 != null) style2.display = visible ? "block":"none";
-				}
-			}
+		jQuery(function() {
+			jQuery('#mood_change').click(function() {
+				jQuery('#mood_form').show();
+				jQuery('#mood_change').hide();
+			});
+		});
 		</script>
-
-		<p>I feel my enquiry is...</p>
+				
 		<form method="post" action="">
-		<select onchange="javascript:setLayerVisible('mood_form', true);" style="width: 100%;" name="mood" id="mood">
+			<div style="display:none" id="mood_form">
+				<select style="width: 100%;" name="mood_select" id="mood_select">
 
-		<?php
-		$i = count($options);
-		foreach ($options as $option) {
-			$i--;
-			echo "<option ";
-			if ($i == $current_mood) echo 'selected="selected" ';
-			echo "value='$i'>$option</option>";
-		}
-		?>
+				<?php
+				$i = count($options);
+				foreach ($options as $option) {
+					$i--;
+					echo "<option ";
+					if ($i == $current_mood) echo 'selected="selected" ';
+					echo "value='$i'>$option</option>";
+				}
+				?>
 
-		<input type="hidden" name="action" value="post" />
-		<?php wp_nonce_field( 'new-post' ); ?>
-		<div style="display:none" id="mood_form">
-			I'm changing status because...
-			<textarea name="posttext" id="posttext" rows="3" style="width: 100%;"></textarea>
-			<input id="submit" type="submit" value="Set new mood &raquo;" />
-		</div>
+				<input type="hidden" name="action" value="post" />
+				<?php wp_nonce_field( 'new-post' ); ?>
+				I'm changing status because...
+				<textarea name="posttext" id="posttext" rows="3" style="width: 100%;"></textarea>
+				<input id="submit" type="submit" value="Set new mood &raquo;" />
+			</div>
 		</form>
+		<input id="mood_change" type="submit" value="Choose a mood..." />
 
 	<?php
 
@@ -252,6 +251,7 @@ function mood_view_details() {
   $widget_ops = array('classname' => 'mood_view_widget', 'description' => "Displays your current mood." );
   wp_register_sidebar_widget('mood_view_widget', 'Mood View', 'display_mood_view', $widget_ops);
 }
+add_action("plugins_loaded", "mood_view_details");
 
 
 // Add a new mood line to the mood table and add the post too
@@ -260,7 +260,7 @@ function update_mood() {
 
 	if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'post' )  {
 
-		$mood = $_POST['mood'];
+		$mood = $_POST['mood_select'];
 
 
 		if( !current_user_can( 'publish_posts' ) ) {
@@ -292,6 +292,7 @@ function update_mood() {
 		exit;
 	}
 }
+add_action("wp_loaded", "update_mood");
 
 
 // When a post is deleted, delete the associated mood too
@@ -304,6 +305,7 @@ function remove_mood($post_id) {
 	$rows_affected = $wpdb->query( "DELETE FROM $table_name WHERE post_id = $post_id AND blog_id = $primary_blog" );
 	restore_current_blog();
 }
+add_action("deleted_post", "remove_mood");
 
 
 // When activated, create the mood table in the database to store each change of mood from all users.
@@ -329,6 +331,7 @@ function mood_view_init() {
 	}
 	restore_current_blog();
 }
+register_activation_hook(__FILE__,'mood_view_init');
 
 
 // Filter posts from a particular time and those older.
@@ -343,6 +346,7 @@ function posts_where( $where ) {
 
 	return $where;
 }
+add_filter( 'posts_where' , 'posts_where' );
 
 
 // Allow user to set the number of points displayed (default = 30)
@@ -372,19 +376,14 @@ function mood_view_control() {
   </p>
 <?php
 }
+register_widget_control('mood_view_widget', 'mood_view_control', 200, 200 );
+
 
 // Add the flot script
 function mood_view_scripts() {
-    wp_enqueue_script( 'flot', plugins_url().'/eb-enquiryblogbuilder/flot/jquery.flot.js', array('jquery'));
+		$path = plugin_dir_url(__FILE__);
+    wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
 }
-
-add_action("wp_loaded", "update_mood");
-add_action("deleted_post", "remove_mood");
-add_action("plugins_loaded", "mood_view_details");
-register_activation_hook(__FILE__,'mood_view_init');
-add_filter( 'posts_where' , 'posts_where' );
 add_action('init', 'mood_view_scripts');
-register_widget_control('mood_view_widget', 'mood_view_control', 200, 200 );
-
 
 ?>

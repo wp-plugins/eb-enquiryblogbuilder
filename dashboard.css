@@ -1,0 +1,23 @@
+
+/* Shared style for the dashboard spider and spiral */
+div.enquiryblogger-dashboard {
+	float:left; 
+	padding-right:10px; 
+	padding-left:10px; 
+	overflow: hidden; 
+	text-overflow: ellipsis; 
+	white-space:nowrap;
+	margin: 1px;
+}
+
+/* Dashboard Spider specific style */
+div.enquiryblogger-dashboard-spider {
+	border: solid 1px gray;
+	border-radius: 5px;
+}
+
+/* Dashboard Spiral specific style */
+div.enquiryblogger-dashboard-spiral {
+	border: solid 1px gray; 
+	border-radius: 5px;
+}

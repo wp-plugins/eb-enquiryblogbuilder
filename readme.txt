@@ -2,7 +2,7 @@
 Contributors: EnquiryBlogger
 Tags: education, school, open university, widget, plugin, wpmu, elli, enquiryblogger
 Requires at least: 3.0.0
-Tested up to: 3.2.1
+Tested up to: 3.4.1
 Stable tag: 1.1
 
 A suit of plugins to help students enquire into a subject and teachers to manage their progress. Intended for use with multi-site setups.
@@ -43,17 +43,39 @@ Part of the Open University EnquiryBlogger suite.
 
 = Where do I find the blog builder page? =
 
-Go to the username drop-down on the right-hand side and select *Site Admin*. Click on *Settings* and then *Enquiry Blog Builder*.
+You need to be super-admin. Then go to *My Sites*, *Network Admin*, *Desktop*. Click on *Settings* and then *Enquiry Blog Builder*.
 
 = What if I want several groups? = 
 
-Each set of blogs is associated with a school (6 letter code) and a group (6 letter code) within the school.
-A blog is made by concatenating the school, group and student name.
+Each set of blogs is associated with a school name and a group name within the school.
+A blog is made by concatenating the school, group and student names.
 The username is made from the school and student name. If the same student (or teacher) appears in several groups, they will have multiple blogs (each with a different group name) but only a single username to manage them.
 
 = What if I want to add a new teacher to an existing group? =
 
-There is a section on the blog builder to add new teachers or students to a group.
+In the 'New Member section, use an existing school and group and add the new member name and email. They will be added to that group - a new blog and user will be created if they don't already exist. All new members are students by default. On the main blog list for that group, click on the Status field to toggle to a teacher and back.
+
+= What are the Categories I should use as a default for every new blog? =
+
+The Categories appear as blobs on the Spiral and the ELLI Spider. Posting under these categories makes the blobs change colour and grow.
+You can use any categories you like, but we use:
+
+* Choosing
+* Observing
+* Questioning
+* Narrating
+* Mapping
+* Connecting
+* Formalising
+* Validating
+* Applying
+* Changing & Learning
+* Learning Relationships
+* Strategic Awareness
+* Resilience
+* Creativity
+* Meaning Making
+* Critical Curiosity
 
 == Screenshots ==
 
@@ -62,8 +84,25 @@ There is a section on the blog builder to add new teachers or students to a grou
 
 == Changelog ==
 
-= 1.0 =
+= 1.1 =
+* Set different images for each leg of the ELLI Spider for each group
+* Set a different header for each group of blogs (requires the Suffusion Theme)
+* Import a CSV to bulk create blogs
+* Export a CSV of the blog urls and usernames for the current group
+* Easily toggle a blog as belonging to a student or a teacher
+* Easily add new members to existing groups
+* Easily move members from one group to another
+* Allow or disallow a blog from being customised (widgets and theme)
+* Add several new members to a new group in one step
+* Spider widget is larger
+* Dashboard fixes for large numbers of blogs and students
 
+= 1.0 =
 * First release of the plugins
 
 == Upgrade Notice ==
+
+= 1.1 =
+
+Many new features and bugs fixed.
+Highlights include custom blog headers, easier blog management, CSV import and export
