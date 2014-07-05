@@ -76,7 +76,7 @@ function display_moods_dashboard_graph($blognames, $values) {
 
 jQuery(function moods() {
 		<?php
-		
+
 		$i = 0;
 		$data = "";
 		foreach ($values as $value) {
@@ -87,7 +87,7 @@ jQuery(function moods() {
 			$i++;
 			if ($i < count($values)) $data = $data.', ';
 		}
-		
+
 		echo "var tooltip = [";
 		$j = 0;
 		foreach ($values as $value) {
@@ -197,10 +197,10 @@ function mood_view_dashboard() {
 	$blognames = array();
 	$values = array();
 	$noPosts = ""; // list of blogs with no mood posts
-	
+
 	foreach ($blogs as $blog) {
 		$prefix = $blog->path;
-		
+
 		$data = get_moods_dashboard_history($blog->blog_id);
 		if ($data != null) {
 			$blognames[] = array($blog->blogname, $blog->siteurl);
@@ -228,7 +228,8 @@ function mood_dashboard_scripts() {
 		$path = plugin_dir_url(__FILE__);
     wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
     wp_enqueue_script( 'flot-tickrotor', $path.'flot/jquery.flot.tickrotor.js', array('jquery', 'flot') );
-    wp_enqueue_script( 'flot-resize', $path.'flot/jquery.flot.resize.min.js', array('jquery', 'flot', 'flot-tickrotor') );
+    wp_enqueue_script( 'flot-resize', $path.'flot/jquery.flot.resize.min.js', array('jquery', 'flot') );
+    wp_enqueue_script( 'flot-time', $path.'flot/jquery.flot.time.js', array('jquery', 'flot') );
     wp_enqueue_style( 'dashboard', $path.'dashboard.css' );
 }
 add_action('admin_menu', 'mood_dashboard_scripts');

@@ -1,20 +1,20 @@
-<div class="wrap">	
+<div class="wrap">
   <div id="icon-users" class="icon32"><br/></div>
-  
+
 	<h2>Enquiry Blog Builder</h2>
 
 	<form id="update_filter" method="get">
 		<p>
 		Display only these members :
-		
-		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+
+		<input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']) ?>" />
 		<input type="hidden" name="update_filter" value="update_filter">
 
 		<label for="teacher_prefix">School </label>
-		<select style="width:130px" name="selected_school" id="selected_school"><?php echo $schoolList; ?></select>
+		<select style="width:130px" name="selected_school" id="selected_school"><?php echo esc_html($schoolList) ?></select>
 
 		<label for="teacher_group">Group </label>
-		<select style="width:130px" name="selected_group" id="selected_group"><?php echo $groupList; ?></select>
+		<select style="width:130px" name="selected_group" id="selected_group"><?php echo esc_html($groupList) ?></select>
 
 		<input type="submit" name="Submit" class="button-primary" value="Update filter" />
 
@@ -26,36 +26,36 @@
 	</form>
 
 	<hr>
-	
+
 	<h3>Add new members</h3>
-	
+
 	<form enctype="multipart/form-data" id="new-members" method="post">
-		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+		<input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']) ?>" />
 		<input type="hidden" name="new_member" value="new_member">
-			
+
 		<table class="form-table">
 			<tbody>
-				<tr>					
+				<tr>
 					<th colspan="2" scope="row">Group details :</th>
 				</tr>
 
-				<tr>					
-					<td><label for="member_name">School </label><input type="text" name="member_school" placeholder="School name" value="<?php echo $current_school;?>" size="20"> <label for="member_name">Group </label><input type="text" name="member_group" placeholder="Group name" value="<?php echo $current_group;?>" size="20">
+				<tr>
+					<td><label for="member_name">School </label><input type="text" name="member_school" placeholder="School name" value="<?php echo esc_attr($current_school) ?>" size="20"> <label for="member_name">Group </label><input type="text" name="member_group" placeholder="Group name" value="<?php echo esc_attr($current_group) ?>" size="20">
 					</td>
 				</tr>
 
-				<tr>					
+				<tr>
 					<th colspan="2" scope="row">Member details :</th>
 				</tr>
 			</tbody>
 
 
-			<tbody id="member_details">				
+			<tbody id="member_details">
 				<tr>
 						<td><input type="text" name="member_name[]" placeholder="Member name" value="" size="20"> <input type="text" name="member_email[]" placeholder="Member email" value="" size="20"> <input type="button" class="button-secondary addMemberDetails" value=" + " /></td>
-				</tr> 
+				</tr>
 			</tbody>
- 				
+
 			<tbody>
 				<tr>
 					<td>OR Select a CSV file with two columns. The first is a list of names, the second a list of email addreses.</td>
@@ -81,14 +81,14 @@
 	</form>
 
 	<hr>
-	
+
 	<h3>Export members details</h3>
 
 	<form id="export-table" method="post">
-		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+		<input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']) ?>" />
 		<input type="hidden" name="export_members" value="export_members">
-		<input type="hidden" name="member_school" value="<?php echo $current_school;?>"> 
-		<input type="hidden" name="member_group" value="<?php echo $current_group;?>">
+		<input type="hidden" name="member_school" value="<?php echo esc_attr($current_school) ?>">
+		<input type="hidden" name="member_group" value="<?php echo esc_attr($current_group) ?>">
 		<p>Export member details as a CSV file <input type="submit" name="Submit" class="button-primary" value="Export" /></p>
 	</form>
 

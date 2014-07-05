@@ -33,7 +33,7 @@ function get_my_mood() {
 	switch_to_blog(1);
 	$table_name = $wpdb->prefix."moods";
 	$current_mood = $wpdb->get_var( "SELECT mood FROM $table_name WHERE blog_id = $my_blog ORDER BY time DESC LIMIT 1" );
-	
+
 	//Debugging
 	//$all_moods = $wpdb->get_results( "SELECT mood, time FROM $table_name WHERE blog_id = $my_blog ORDER BY time DESC" );
 	//echo "<!-- MOODY ".$table_name." current:".$current_mood." ";
@@ -41,7 +41,7 @@ function get_my_mood() {
 	//echo "-->";
 
 	restore_current_blog();
-	if (empty($current_mood)) $current_mood = 4; // error getting data from table, so choose default mood
+	if (($current_mood != 0) && empty($current_mood)) $current_mood = 4; // error getting data from table, so choose default mood
 	return $current_mood;
 }
 
@@ -202,9 +202,9 @@ function display_mood_view($args) {
 
 	if( is_user_logged_in() && current_user_can( 'publish_posts' ) && ($blog_id == get_user_meta( get_current_user_id(), 'primary_blog', true ))) {
 		?>
-		
+
 		<script language="javascript" type="text/javascript">
-		
+
 		jQuery(function() {
 			jQuery('#mood_change').click(function() {
 				jQuery('#mood_form').show();
@@ -212,7 +212,7 @@ function display_mood_view($args) {
 			});
 		});
 		</script>
-				
+
 		<form method="post" action="">
 			<div style="display:none" id="mood_form">
 				<select style="width: 100%;" name="mood_select" id="mood_select">
@@ -240,7 +240,7 @@ function display_mood_view($args) {
 
 	}
   else {
-		echo "<p>My mood is ".$options[4-$current_mood],"</p>";
+		echo "<p>My mood is ".$options[4-$current_mood]."</p>";
 	}
   echo $after_widget;
 }
@@ -382,7 +382,8 @@ register_widget_control('mood_view_widget', 'mood_view_control', 200, 200 );
 // Add the flot script
 function mood_view_scripts() {
 		$path = plugin_dir_url(__FILE__);
-    wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
+   wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
+   wp_enqueue_script( 'flot-time', $path.'flot/jquery.flot.time.js', array('jquery', 'flot') );
 }
 add_action('init', 'mood_view_scripts');
 
