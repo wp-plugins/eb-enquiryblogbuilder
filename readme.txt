@@ -80,9 +80,15 @@ You can use any categories you like, but we use:
 == Screenshots ==
 
 1. The three widgets on a student's blog.
-1. A view on the dashboard for a teacher of two students.
+1. A view on the dashboard for a teacher of several students.
 
 == Changelog ==
+
+= 1.2 =
+* Fixed a number of cross site security issues
+* Fixed a bug in the mood view plugin
+* Updated the description and screenshots
+* Flot graph library updated to 0.8.3
 
 = 1.1 =
 * Set different images for each leg of the ELLI Spider for each group
