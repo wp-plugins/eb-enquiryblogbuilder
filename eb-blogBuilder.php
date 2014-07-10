@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Blog Builder
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: WordPress admin plugin to build a set of teacher and student blogs
-		Version: 1.1
+		Version: 1.2
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -31,7 +31,7 @@ if (!class_exists('MemberTable')) {
 
 
 // Only comment in if using the suffusion theme.
-// Also remember to put the suffusion-child theme into your theme folder 
+// Also remember to put the suffusion-child theme into your theme folder
 // to add a list of the other blogs within a group on every blog home page menu.
 include_once('eb-suffusionSetup.php');
 
@@ -45,17 +45,17 @@ function eb_settings_page() {
 
 	// See if the user has posted us some information
 	// If they did, the hidden field will be set
-	
+
 	if( isset($_REQUEST['page']) && $_REQUEST['page'] == 'enquiryblogger_blog_creation') {
-	
+
 		// Change the group for a member within the table
 		if (isset($_POST['switch_group']) && $_POST['switch_group'] == 'switch_group' ) {
 			updateGroup($_POST['blog_id'], $_POST['selected_school'], $_POST['update_group']);
-			
+
 			$selected_school = $_POST['selected_school'];
 			$selected_group = $_POST['selected_group'];
 		}
-		
+
 		// Add a new member from the form below the table
 		if (isset($_POST['new_member']) && $_POST['new_member'] == 'new_member' ) {
 			$school_name = strtolower(preg_replace('/[^A-Za-z0-9]/', '', ($_POST['member_school'])));
@@ -75,13 +75,13 @@ function eb_settings_page() {
 					echo '<div class="updated"><p><strong>Adding a member</strong></p><p>'.$infoMessage.'</p></div>';
 				}
 			}
-			
+
 			$selected_school = $school_name;
 			$selected_group = $group_name;
 		}
 
 		// Change setting for a member in the table - Student/Teacher, Customise or not
-		if (isset($_GET['member']) && isset($_GET['action'])) {	
+		if (isset($_GET['member']) && isset($_GET['action'])) {
 
 			if (($_GET['action'] == 'promote') || ($_GET['action'] == 'demote')) {
 				updateLeadership($_GET['member'], ($_GET['action'] == 'promote'));
@@ -92,17 +92,17 @@ function eb_settings_page() {
 			}
 
 			$selected_school = $_GET['selected_school'];
-			$selected_group = $_GET['selected_group'];		
+			$selected_group = $_GET['selected_group'];
 		}
-		
+
 		// Changed filter at top of page
 		if( isset($_GET['update_filter']) && $_GET['update_filter'] == 'update_filter' ) {
 			$selected_school = $_GET['selected_school'];
 			$selected_group = $_GET['selected_group'];
 		}
 	}
-	
-	$schoolInfo = get_dropdown_schools();	
+
+	$schoolInfo = get_dropdown_schools();
 	$schoolList = to_dropdown($schoolInfo, $selected_school);
 
 	if (!empty($schoolInfo)) {
@@ -112,13 +112,13 @@ function eb_settings_page() {
 		$groupInfo = NULL;
 	}
 	$groupList = to_dropdown($groupInfo, $selected_group);
-	
+
 	if (!empty($schoolInfo)) $current_school = empty($selected_school) ? $schoolInfo[0]->name : $selected_school;
 	if (!empty($groupInfo)) $current_group = empty($selected_group) ? $groupInfo[0]->name : $selected_group;
-	
+
 	$testListTable = new MemberTable(); //Create an instance of our package class...
 	$testListTable->prepare_items($current_school, $current_group); // Display the first school and first group
-	    	        
+
 	include_once('eb-memberTableView.php');
 }
 
@@ -197,7 +197,7 @@ function eb_importMembers($file, $school_name, $group_name) {
  */
 function updateLeadership($blog_id, $value) {
 	global $wpdb;
-	
+
 	switch_to_blog(1);
 	$table_name = $wpdb->prefix."group_members";
 	$group_id = $wpdb->update($table_name, array('leader' => $value), array('blog_id' => $blog_id));
@@ -207,10 +207,10 @@ function updateLeadership($blog_id, $value) {
 	$dashboard_plugins = array('eb-enquiryblogbuilder/eb-enquiryMoodDashboard.php', 'eb-enquiryblogbuilder/eb-enquirySpiderDashboard.php', 'eb-enquiryblogbuilder/eb-enquirySpiralDashboard.php');
 
 	switch_to_blog($blog_id);
-	foreach ($dashboard_plugins as $plugin) { 
+	foreach ($dashboard_plugins as $plugin) {
 		if ($value && !is_plugin_active($plugin)) activate_plugin( $plugin, '', false);
 		if (!$value && is_plugin_active($plugin)) deactivate_plugins( $plugin );
-	}	
+	}
 	restore_current_blog();
 }
 
@@ -246,13 +246,13 @@ function updateGroup($blog_id, $school_name, $group_name) {
 		$table_name = $wpdb->prefix."group_members";
 		$group_id = $wpdb->update($table_name, array('group_id' => $group_id), array('blog_id' => $blog_id));
 	}
-	
+
 	update_suffusion_settings($blog_id); // update the blog header image
-	
+
 	restore_current_blog();
 }
 
-/* 
+/*
  * Get the id of the school group pair - if the school, group pair does not exist and create is true, create it
  */
 function get_group_id($school_name, $group_name, $create = true) {
@@ -262,18 +262,18 @@ function get_group_id($school_name, $group_name, $create = true) {
 	$table_name = $wpdb->prefix."group_list";
 
 	$group_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_name WHERE school_name = %s AND group_name = %s", $school_name, $group_name));
-	
+
 	if (empty($group_id) && $create) {
 		$wpdb->insert($table_name, array( 'school_name' => $school_name, 'group_name' => $group_name, 'time' => current_time('mysql')) );
 		$group_id = $wpdb->insert_id;
-	}	
+	}
 	restore_current_blog();
 
 	return ($group_id);
 }
 
 
-/* 
+/*
  * Link the blog_id and member_id to the school group pair
  */
 function add_blog_membership($member_blog_id, $member_user_id, $school_name, $group_name) {
@@ -281,7 +281,7 @@ function add_blog_membership($member_blog_id, $member_user_id, $school_name, $gr
 
 	$group_id = get_group_id($school_name, $group_name);
 	updateLeadership($member_blog_id, false); // always a member initially
-	
+
 	switch_to_blog(1);
 	$table_name = $wpdb->prefix."group_members";
 	$entryExisits = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $table_name WHERE blog_id = %d AND user_id = %d AND group_id = %d", $member_blog_id, $member_user_id, $group_id) );
@@ -293,7 +293,7 @@ function add_blog_membership($member_blog_id, $member_user_id, $school_name, $gr
 }
 
 
-/* 
+/*
  * Create a new member (if required) and add it to a new blog (if required)
  */
 function create_member($school_name, $group_name, $memberName, $memberEmail) {
@@ -309,25 +309,25 @@ global $wpdb, $current_site;
 	$member_blogname = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $school_name.$group_name.$memberName)); // can only have a-z, 0-9
 	$member_username = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $school_name.$memberName)); // can only have a-z, 0-9
 	$member_username = sanitize_user($member_username, true);
-	
+
 	if (!empty($member_blogtitle)) {
 
 		// Create a member if the email address or username doesn't already exist
-		$member_user_id = email_exists($memberEmail);		
+		$member_user_id = email_exists($memberEmail);
 		if ( !$member_user_id || $memberEmail == '') {
 			$member_user_id = username_exists( $member_username );
 		} else {
 			$infoMessage .= "Email '$memberEmail' already used, existing member used, password unchanged.<br />";
 		}
-		
+
 		if ( !$member_user_id ) {
 			$member_user_id = wpmu_create_user( $member_username, 'member', $memberEmail );
 			$infoMessage .= 'New member : <strong>'.$memberText.'</strong> Username: <strong>'.$member_username.'</strong> Password : <strong>member</strong><br /> ';
 		} else {
 			$infoMessage .= "Username '$member_username' already used, existing member used, password unchanged.<br />";
 		}
-		if ( is_wp_error($member_user_id) ) wp_die($member_user_id->get_error_message());		
-		
+		if ( is_wp_error($member_user_id) ) wp_die($member_user_id->get_error_message());
+
 		// Create a blog and attach the member to it
 		$member_blogtitle .= "'s blog";
 		$result = wpmu_validate_blog_signup($member_blogname, $member_blogtitle, $user = '');
@@ -343,10 +343,10 @@ global $wpdb, $current_site;
 			add_user_to_blog($member_blog_id, $member_user_id, 'author');
 		}
 		if (is_wp_error( $member_blog_id )) wp_die( $member_blog_id->get_error_message());
-		
+
 		// Add an entry to link groups of blogs together
-		add_blog_membership($member_blog_id, $member_user_id, $school_name, $group_name);	
-		
+		add_blog_membership($member_blog_id, $member_user_id, $school_name, $group_name);
+
 		// Update the header to use the image associated with the group
 		update_suffusion_settings($member_blog_id);
 	}
@@ -356,20 +356,20 @@ global $wpdb, $current_site;
 
 
 // Return list of all schools
-function get_dropdown_schools() {	
+function get_dropdown_schools() {
 	global $wpdb;
-	$table_name = $wpdb->prefix."group_list";	
+	$table_name = $wpdb->prefix."group_list";
 	$info = $wpdb->get_results("SELECT school_name AS name FROM $table_name GROUP BY school_name");
-	return $info;	
+	return $info;
 }
 
 
 // Return list of groups from the first school in the given list
-function get_dropdown_groups($school) {	
+function get_dropdown_groups($school) {
 	global $wpdb;
-	$table_name = $wpdb->prefix."group_list";	
+	$table_name = $wpdb->prefix."group_list";
 	$info = $wpdb->get_results($wpdb->prepare("SELECT group_name AS name FROM $table_name WHERE school_name = %s", $school));
-	return $info;	
+	return $info;
 }
 
 
@@ -387,7 +387,7 @@ function to_dropdown($info, $selected) {
 
 // Ajax function to update the group filter list when the school item changes
 function set_group_list() {
-  if (isset($_POST['selected_school'])) {  
+  if (isset($_POST['selected_school'])) {
 		$info = get_dropdown_groups($_POST['selected_school']);
 		$list = to_dropdown($info, false);
 	}
@@ -409,7 +409,7 @@ function update_roles($blog_id) {
 	$author_role->add_cap('edit_theme_options'); // Change widegts, colours and theme option - this is toggled by 'Customize' in the blog list
 
 	$author_role->add_cap('manage_options'); // Change the blog name and the way posts are displayed
-	
+
 	$author_role->add_cap('delete_pages'); // Allow pages to be created and removed
 	$author_role->add_cap('delete_published_pages');
 	$author_role->add_cap('edit_pages');
@@ -452,7 +452,7 @@ function eb_plugin_menu() {
 }
 add_action('network_admin_menu', 'eb_plugin_menu');
 
-	
+
 // When activated, create the group tables in the database to store each group and their members
 function blog_builder_init() {
 	global $wpdb;
@@ -497,11 +497,11 @@ global $wpdb;
 
 		switch_to_blog(1);
 		$table_name = $wpdb->prefix."group_members";
-		$group_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $table_name WHERE blog_id = %d", $blog_id));		
-		
+		$group_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $table_name WHERE blog_id = %d", $blog_id));
+
 		if (!empty($group_id)) {
 			$wpdb->query($wpdb->prepare("DELETE FROM $table_name WHERE blog_id = %d", $blog_id));
-			$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE group_id = %d", $group_id));			
+			$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE group_id = %d", $group_id));
 			if ($count == 0) {
 				$table_name = $wpdb->prefix."group_list";
 				$wpdb->query($wpdb->prepare("DELETE FROM $table_name WHERE id = %d", $group_id));

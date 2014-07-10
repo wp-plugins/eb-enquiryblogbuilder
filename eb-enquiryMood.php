@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Mood View
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Allows student to set their current mood
-		Version: 1.1
+		Version: 1.2
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2

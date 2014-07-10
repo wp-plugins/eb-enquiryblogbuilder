@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Enquiry Spiral
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays how many posts in each category have been posted
-		Version: 1.1
+		Version: 1.2
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -100,7 +100,7 @@ function display_spiral($categories, $prefix) {
 	<div style="text-align:center">
 	<img src="<?php echo $prefix.$path.'spiral_'.$blog_id.'.png';?>" style="border:0" title="Enquiry Spiral" alt="Enquiry Spiral" usemap="#spiral_<?php echo $blog_id; ?>" />
 	</div>
-	
+
 	<?php
 }
 

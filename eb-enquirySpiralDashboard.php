@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Enquiry Spiral Dashboard
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays category details of all other blogs
-		Version: 1.1
+		Version: 1.2
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -30,7 +30,7 @@ include_once("eb-functions.php");
 // Output a single imagemap for a particular blog
 function display_spiral_dashboard($categories, $prefix, $id) {
 
-	$path = dirname(__FILE__);	
+	$path = dirname(__FILE__);
 	$filename = $path.'/spiralBackground.jpg';
 
 	$work_img = imagecreatefromjpeg( $filename );
@@ -127,22 +127,22 @@ jQuery(function spiral() {
 			$i++;
 			if ($i < count($values)) $data = $data.', ';
 		}
-		
+
 		$i = 0;
 		echo 'var spiral_blognames = [';
 		foreach ($blognames as $name) {
 			echo '"'.$name[1].'"';
 			$i++;
-			if ($i < count($blognames)) echo ', '; 
+			if ($i < count($blognames)) echo ', ';
 		}
 		echo '];';
-				
+
 		$i = 0;
 		echo 'var spiral_categorynames = [';
 		foreach ($categories as $category) {
 			echo '{url:"'.$category->slug.'",name:"'.$category->name.'"}';
 			$i++;
-			if ($i < count($categories)) echo ', '; 
+			if ($i < count($categories)) echo ', ';
 		}
 		echo '];';
 		?>
@@ -168,10 +168,10 @@ jQuery(function spiral() {
 								rotateTicks: 90,
 								ticks: [<?php $i = 0; foreach ($blognames as $name) { echo '['.$i.',"'.html_entity_decode($name[0], ENT_QUOTES | ENT_HTML401).'"]';$i++; if ($i < count($blognames)) echo ', '; }?>]
 						}
-						
+
         });
     }
-	
+
    jQuery("#spiral_placeholder").bind("plotclick", function (event, pos, item) {
 			if (item) {
 				window.open(spiral_blognames[item.dataIndex]+"/category/"+spiral_categorynames[item.seriesIndex].url, "_self", null, true);
@@ -179,7 +179,7 @@ jQuery(function spiral() {
     });
 
     function showTooltip(x, y, label) {
-			
+
 			jQuery('<div id="tooltip">' + label + '</div>').css( {
 				position: 'absolute',
 				display: 'none',
@@ -194,9 +194,9 @@ jQuery(function spiral() {
 
 		var previousPoint = null;
 		jQuery("#spiral_placeholder").bind("plothover", function (event, pos, item) {
-			
+
 			if (item) {
-				
+
 				if (previousPoint != item.datapoint) {
 					previousPoint = item.datapoint;
 
@@ -244,7 +244,7 @@ function display_enquiry_spiral_dashboard() {
 	$blognames = array();
 	$values = array();
 	$noPosts = ""; // list of blogs with no posts in any category
-	
+
 	foreach ($blogs as $blog) {
 
 		$prefix = $blog->path;
@@ -269,8 +269,8 @@ function display_enquiry_spiral_dashboard() {
 				break;
 			}
 		}
-		
-		if ($hasPosts) { 
+
+		if ($hasPosts) {
 			// Store all the values for use in the combined graph
 			$blognames[] = array($blog->blogname, $blog->siteurl); // $blog->blogname;
 			foreach ($categories as $category) {
@@ -280,12 +280,12 @@ function display_enquiry_spiral_dashboard() {
 			if ($noPosts != "") $noPosts = $noPosts.', ';
 			$noPosts = $noPosts.'<a href="'.$prefix.'">'.$blog->blogname.'</a>';
 		}
-		
+
 	}
 	echo '<div style="clear:left;"> </div>';
 
 	if (!empty($values)) display_spiral_graph($blognames, $values, $categories);
-	
+
 	if ($noPosts != "") echo '<hr><h4>Blogs with no posts in their enquiry spiral</h4><p>'.$noPosts.'</p>';
 }
 
@@ -296,7 +296,7 @@ function enquiry_spiral_dashboard_init() {
 }
 add_action('wp_dashboard_setup', 'enquiry_spiral_dashboard_init' );
 
-function spiral_dashboard_scripts() {	
+function spiral_dashboard_scripts() {
 		$path = plugin_dir_url(__FILE__);
     wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
     wp_enqueue_script( 'flot-stack', $path.'flot/jquery.flot.stack.min.js', array('jquery', 'flot') );
