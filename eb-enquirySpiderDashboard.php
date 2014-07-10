@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: ELLI Spider Dashboard
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays category details of all other blogs
-		Version: 1.1
+		Version: 1.2
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -12,7 +12,7 @@
 /*  Copyright 2010  Geoff Austin  (email : Geoff.Austin@codejuggler.com)
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -32,13 +32,13 @@ include_once("eb-spiderSetup.php");
 // Output a single imagemap for a particular blog
 function display_spider_dashboard($categories, $prefix, $id) {
 
-	$path = dirname(__FILE__);	
+	$path = dirname(__FILE__);
 	$filename = $path.'/spiderBackground.jpg';
-	
+
 	$work_img = imagecreatefromjpeg( $filename );
 
 	if (!$work_img) return;
-	
+
 	$edge_colour = 0x00000000;
 	$nopost_colour = 0x00FF4040;
 	$somepost_colour = 0x00FFA240;
@@ -49,24 +49,24 @@ function display_spider_dashboard($categories, $prefix, $id) {
 	$maxSize = 50;
 	$thickness = 3;
 	$spiderImageWidth = 130;
-	
+
 	list( $width, $height ) = getimagesize( $filename );
 	$scale = $spiderImageWidth / $width;
-	
+
 	$points = getPoints(120, $width);
 
 	echo '<map name="spider_'.$id.'">';
 
 	$i = 0;
 	foreach ($categories as $category) {
-		
+
 		$post = min($postLimit, $category->count);
-		
+
 		$radius = $minSize + ($post / $postLimit) * ($maxSize - $minSize);
 		$colour = ($post <= 0) ? $nopost_colour : (($post <= 1) ? $somepost_colour : $manypost_colour);
 		list($x_pos, $y_pos) = $points[$i];
 		if ($x_pos == null) break;
-		
+
 		$label = $category->name.' ('.$category->count.')';
 		$url = $prefix.'category/'.$category->slug;
 
@@ -76,25 +76,25 @@ function display_spider_dashboard($categories, $prefix, $id) {
 		$i++;
 	}
 	echo '</map>';
-	
+
 	$new_width = $width * $scale;
 	$new_height = $height * $scale;
-	
+
 	$final_img = imagecreatetruecolor($new_width, $new_height);
 	if (!$final_img) return;
-	
+
 	imagecopyresampled($final_img, $work_img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-	
+
 	if (!imagepng( $final_img, $path.'/spider_'.$id.'.png' )) return;
 
 	imagedestroy( $work_img );
 	imagedestroy( $final_img );
-	
+
 	?>
-	
+
 	<img src="<?php echo plugins_url().'/eb-enquiryblogbuilder/spider_'.$id.'.png';?>" style="border:0" title="ELLI Spider" alt="ELLI Spider" usemap="#spider_<?php echo $id ?>" />
-	
-	<?php	
+
+	<?php
 }
 
 
@@ -109,7 +109,7 @@ function display_spider_graph($blognames, $values, $categories) {
 <script language="javascript" type="text/javascript">
 
 jQuery(function spider() {
-		<?php 
+		<?php
 		$i = 0;
 		$data = "";
 		foreach ($values as $value) {
@@ -126,16 +126,16 @@ jQuery(function spider() {
 		foreach ($blognames as $name) {
 			echo '"'.$name[1].'"';
 			$i++;
-			if ($i < count($blognames)) echo ', '; 
+			if ($i < count($blognames)) echo ', ';
 		}
 		echo '];';
-				
+
 		$i = 0;
 		echo 'var spider_categorynames = [';
 		foreach ($categories as $category) {
 			echo '{url:"'.$category->slug.'",name:"'.$category->name.'"}';
 			$i++;
-			if ($i < count($categories)) echo ', '; 
+			if ($i < count($categories)) echo ', ';
 		}
 		echo '];';
 		?>
@@ -163,7 +163,7 @@ jQuery(function spider() {
 						}
         });
     }
-    
+
    jQuery("#spider_placeholder").bind("plotclick", function (event, pos, item) {
 			if (item) {
 				window.open(spider_blognames[item.dataIndex]+"/category/"+spider_categorynames[item.seriesIndex].url, "_self", null, true);
@@ -171,7 +171,7 @@ jQuery(function spider() {
     });
 
     function showTooltip(x, y, label) {
-			
+
 			jQuery('<div id="tooltip">' + label + '</div>').css( {
 				position: 'absolute',
 				display: 'none',
@@ -186,9 +186,9 @@ jQuery(function spider() {
 
 		var previousPoint = null;
 		jQuery("#spider_placeholder").bind("plothover", function (event, pos, item) {
-			
+
 			if (item) {
-				
+
 				if (previousPoint != item.datapoint) {
 					previousPoint = item.datapoint;
 
@@ -212,10 +212,10 @@ jQuery(function spider() {
 }
 
 // Output the contents of the Enquiry Spider Dashboard
-function display_enquiry_spider_dashboard() {	
+function display_enquiry_spider_dashboard() {
 
 	global $current_user;
-		
+
   $args = array(
 	    'type'                     => 'post',
 	    'child_of'                 => 0,
@@ -227,7 +227,7 @@ function display_enquiry_spider_dashboard() {
 	    'exclude'                  => '1,2,3,4,5,6,7,8,9,10,11', // exclude 'other' category and those in the spiral
 	    'taxonomy'                 => 'category',
     	'pad_counts'               => false );
-    	
+
 	$blogs = get_student_blogs($current_user->id);
 	//$blogs = get_blogs_of_user( $current_user->id );
 	$primary_blog = get_user_meta( get_current_user_id(), 'primary_blog', true );
@@ -236,7 +236,7 @@ function display_enquiry_spider_dashboard() {
 	$blognames = array();
 	$values = array();
 	$noPosts = ""; // list of blogs with no posts in any category
-		
+
 	foreach ($blogs as $blog) {
 		//if ($primary_blog == $blog->userblog_id) continue;
 
@@ -263,8 +263,8 @@ function display_enquiry_spider_dashboard() {
 				break;
 			}
 		}
-		
-		if ($hasPosts) { 
+
+		if ($hasPosts) {
 			// Store all the values for use in the combined graph
 			$blognames[] = array($blog->blogname, $blog->siteurl); // $blog->blogname;
 			foreach ($categories as $category) {
@@ -281,16 +281,16 @@ function display_enquiry_spider_dashboard() {
 
 	if ($noPosts != "") echo '<hr><h4>Blogs with no posts in their ELLI Spider</h4><p>'.$noPosts.'</p>';
 
-} 
+}
 
 
 // Create the function to use in the action hook
 function enquiry_spider_dashboard_init() {
-	wp_add_dashboard_widget('enquiry_spider_dashboard', 'ELLI Spider Dashboard', 'display_enquiry_spider_dashboard');	
-} 
+	wp_add_dashboard_widget('enquiry_spider_dashboard', 'ELLI Spider Dashboard', 'display_enquiry_spider_dashboard');
+}
 add_action('wp_dashboard_setup', 'enquiry_spider_dashboard_init' );
 
-function spider_dashboard_scripts() {	
+function spider_dashboard_scripts() {
 		$path = plugin_dir_url(__FILE__);
     wp_enqueue_script( 'flot', $path.'flot/jquery.flot.min.js', array('jquery') );
     wp_enqueue_script( 'flot-stack', $path.'flot/jquery.flot.stack.min.js', array('jquery', 'flot') );

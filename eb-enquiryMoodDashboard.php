@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: Mood View Dashboard
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays the mood of all other blogs
-		Version: 1.1
+		Version: 1.2
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2

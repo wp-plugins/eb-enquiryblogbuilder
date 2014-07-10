@@ -3,7 +3,7 @@
 		Plugin Name: EnquiryBlogger: ELLI Spider
 		Plugin URI: http://kmi.open.ac.uk/
 		Description: Displays how many posts in each category have been posted
-		Version: 1.1
+		Version: 1.2
 		Author: KMi
 		Author URI: http://kmi.open.ac.uk/
 		License: GPL2
@@ -37,7 +37,7 @@ function getGroupFromBlog($blog_id) {
 	$table_name = $wpdb->prefix."group_members";
 	$group_id = $wpdb->get_var($wpdb->prepare("SELECT group_id FROM $table_name WHERE blog_id = %d", $blog_id));
 	restore_current_blog();
-	
+
 	return ($group_id);
 }
 
@@ -49,19 +49,19 @@ function groupHasImages($group_id) {
 	$table_name = $wpdb->prefix."group_spider";
 	$spider_info = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE group_id = %s", $group_id));
 	restore_current_blog();
-	
+
 	for ($i = 0; $i < 7; $i++) {
 		$imageName = 'image_'.$i;
 		if ($spider_info->$imageName != NULL) return true;
 	}
-	
+
 	return ($false);
 }
 
 
 function display_spider($categories, $prefix) {
-	global $blog_id;	
-	
+	global $blog_id;
+
 	$path = '/wp-content/plugins/eb-enquiryblogbuilder/';
 	$filename = getcwd().$path.'spiderBackground';
 
@@ -69,7 +69,7 @@ function display_spider($categories, $prefix) {
 	// If the blog is in a group, and the group has images assigned, then use it
 	$group_id = getGroupFromBlog($blog_id);
 	$has_images = groupHasImages($group_id);
-	if ($group_id && $has_images) {		
+	if ($group_id && $has_images) {
 		$filename = $filename.'_'.$group_id.'.jpg';
 		rebuildSpider($group_id);
 		$pointDistance = 60;
@@ -77,8 +77,8 @@ function display_spider($categories, $prefix) {
 		$filename = $filename.'.jpg';
 		$pointDistance = 120;
 	}
-	
-	
+
+
 	$work_img = imagecreatefromjpeg( $filename );
 	if (!$work_img) return;
 
@@ -102,7 +102,7 @@ function display_spider($categories, $prefix) {
 
 	$i = 0;
 	foreach ($categories as $category) {
-	
+
 		$post = min($postLimit, $category->count);
 
 		$radius = $minSize + ($post / $postLimit) * ($maxSize - $minSize);
@@ -138,7 +138,7 @@ function display_spider($categories, $prefix) {
 	<div style="text-align:center">
 	<img src="<?php echo $prefix.$path.'spider_'.$blog_id.'.png';?>" style="border:0" title="ELLI spider" alt="ELLI spider" usemap="#spider_<?php echo $blog_id; ?>" />
 	</div>
-	
+
 	<?php
 }
 
